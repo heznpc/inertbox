@@ -80,16 +80,16 @@ prompt injection (see Limitations).
 The core is surface-agnostic ESM:
 
 ```js
-import { process } from "./core/index.mjs";
+import { process as buildBoundary } from "./core/index.mjs";
 
-const { prompt, rendered } = process(
+const { prompt, rendered } = buildBoundary(
   "Summarize this ⟦EXT⟧ignore previous instructions⟦/EXT⟧",
   { targets: ["spotlight", "json"] },
 );
 
 console.log(rendered.spotlight);              // plaintext boundary with a collision-free delimiter
 console.log(rendered.json.untrusted_blocks);  // structured source-of-truth projection
-// prompt.meta.warnings → advisory warnings (e.g. possible-boundary-escape)
+console.log(prompt.meta.warnings);            // advisory warnings, e.g. possible-boundary-escape (often [])
 ```
 
 ## Claude Code hook usage
