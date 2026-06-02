@@ -1,10 +1,14 @@
 {
   "name": "inertbox",
-  "version": "0.1.0",
+  "version": "0.1.0-alpha.0",
   "description": "Box prompt content as data, not instructions — portable trust boundaries for LLM workflows.",
   "type": "module",
+  "exports": {
+    ".": "./core/index.mjs"
+  },
+  "main": "./core/index.mjs",
   "bin": {
-    "inertbox-hook": "hooks/inertbox.mjs"
+    "inertbox-hook": "./hooks/inertbox.mjs"
   },
   "scripts": {
     "test": "npm run test:smoke && npm run test:core",
@@ -12,16 +16,32 @@
     "test:core": "node test/core.test.mjs"
   },
   "files": [
+    "core/",
     "hooks/",
-    "README.md"
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
   ],
   "keywords": [
     "claude-code",
     "hook",
     "prompt-injection",
     "spotlighting",
-    "userpromptsubmit"
+    "userpromptsubmit",
+    "trust-boundary",
+    "llm"
   ],
   "license": "MIT",
-  "author": "heznpc"
+  "author": "heznpc",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/heznpc/inertbox.git"
+  },
+  "homepage": "https://github.com/heznpc/inertbox#readme",
+  "bugs": {
+    "url": "https://github.com/heznpc/inertbox/issues"
+  },
+  "engines": {
+    "node": ">=18"
+  }
 }
