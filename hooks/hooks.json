@@ -1,0 +1,17 @@
+{
+  "description": "callout — mark user-channel quoted blocks (⟦EXT⟧…⟦/EXT⟧) as data, not commands",
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/callout.mjs",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "name": "@heznpc/callout",
+  "version": "0.1.0",
+  "description": "UserPromptSubmit hook that flags quoted blocks inside your own prompt as data, not commands.",
+  "type": "module",
+  "bin": {
+    "callout-hook": "hooks/callout.mjs"
+  },
+  "scripts": {
+    "test": "node test/smoke.mjs"
+  },
+  "files": [
+    "hooks/",
+    "README.md"
+  ],
+  "keywords": [
+    "claude-code",
+    "hook",
+    "prompt-injection",
+    "spotlighting",
+    "userpromptsubmit"
+  ],
+  "license": "MIT",
+  "author": "heznpc"
+}
