@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-// Smoke test for the callout UserPromptSubmit hook.
-// Pipes sample hook-input JSON through hooks/callout.mjs and asserts the output.
+// Smoke test for the inertbox UserPromptSubmit hook.
+// Pipes sample hook-input JSON through hooks/inertbox.mjs and asserts the output.
 // Run: node test/smoke.mjs   (or: npm test)
 
 import { spawnSync } from "node:child_process";
@@ -8,7 +8,7 @@ import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
 const here = dirname(fileURLToPath(import.meta.url));
-const HOOK = join(here, "..", "hooks", "callout.mjs");
+const HOOK = join(here, "..", "hooks", "inertbox.mjs");
 
 function run(inputObj) {
   const res = spawnSync("node", [HOOK], {

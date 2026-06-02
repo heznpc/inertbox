@@ -1,10 +1,10 @@
 {
-  "name": "@heznpc/callout",
+  "name": "inertbox",
   "version": "0.1.0",
-  "description": "UserPromptSubmit hook that flags quoted blocks inside your own prompt as data, not commands.",
+  "description": "Box prompt content as data, not instructions — portable trust boundaries for LLM workflows.",
   "type": "module",
   "bin": {
-    "callout-hook": "hooks/callout.mjs"
+    "inertbox-hook": "hooks/inertbox.mjs"
   },
   "scripts": {
     "test": "npm run test:smoke && npm run test:core",

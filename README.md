@@ -1,4 +1,6 @@
-# (project name: TBD — `callout` is a placeholder, not a final name)
+# Inertbox
+
+**Box prompt content as data, not instructions.**
 
 **Portable trust boundaries for LLM workflows.**
 
@@ -38,13 +40,13 @@ what this layer can guarantee — see **Non-goals**.
   - `process(input, config)` — orchestrates parse → detect → attach risks → compile.
 - **Renderers**: spotlight / plaintext, xml-like, Markdown, JSON (JSON as a structured
   object, not a stringified blob).
-- **Tests**: core **46/46**, hook smoke **10/10**, **total 56/56** via `npm test`.
+- **Tests**: core **61/61**, hook smoke **10/10**, **total 71/71** via `npm test`.
 - **Existing Claude Code `UserPromptSubmit` hook** — present as a **pre-core
   proof-of-concept** (flags marked blocks, injects guidance). **It is not yet refactored
   to consume the core.**
 
 ```bash
-npm test    # smoke 10/10 + core 46/46 = total 56/56
+npm test    # smoke 10/10 + core 61/61 = total 71/71
 ```
 
 ## Design intent
@@ -116,5 +118,4 @@ a sandbox, or an output optimizer.
 
 - No external persons, accounts, emails, tokens, or API keys.
 - No user / usage / star metrics.
-- The project name is intentionally undecided. `callout` (the directory and the
-  `@heznpc/callout` package) is a **placeholder**, not a final name or brand claim.
+- Published as the `inertbox` package; repository `nertbox`.
