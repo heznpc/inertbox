@@ -6,6 +6,8 @@
 
 > It makes the boundary legible and portable. It does not make it obeyed.
 
+**Status:** public alpha (`v0.1.0-alpha`) — not published to npm yet; run from source (see [Quick start](#quick-start)).
+
 When you talk to an LLM, your real instruction and pasted external content — a web
 page, an email, a document, another model's output, logs, code — arrive in the same
 input. Instruction-shaped text inside that external content ("ignore previous
@@ -187,3 +189,7 @@ a sandbox, or an output optimizer.
 - No external persons, accounts, emails, tokens, or API keys.
 - No user / usage / star metrics.
 - Published as the `inertbox` package; GitHub repository `heznpc/inertbox`.
+
+## License
+
+MIT © 2026 heznpc. See [LICENSE](LICENSE).
