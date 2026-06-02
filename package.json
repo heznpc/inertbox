@@ -7,7 +7,9 @@
     "callout-hook": "hooks/callout.mjs"
   },
   "scripts": {
-    "test": "node test/smoke.mjs"
+    "test": "npm run test:smoke && npm run test:core",
+    "test:smoke": "node test/smoke.mjs",
+    "test:core": "node test/core.test.mjs"
   },
   "files": [
     "hooks/",
