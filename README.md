@@ -118,4 +118,4 @@ a sandbox, or an output optimizer.
 
 - No external persons, accounts, emails, tokens, or API keys.
 - No user / usage / star metrics.
-- Published as the `inertbox` package; repository `nertbox`.
+- Published as the `inertbox` package; GitHub repository `heznpc/inertbox`.

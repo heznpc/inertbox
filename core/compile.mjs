@@ -83,7 +83,7 @@ function renderSpotlight(annotated, delim, guidance, includeRisks) {
     lines.push(b.content);
     lines.push(delim.close);
     if (includeRisks && b.risks && b.risks.length) {
-      lines.push(`(callout risk signals: ${b.risks.map((r) => `${r.type}/${r.severity}`).join(", ")})`);
+      lines.push(`(inertbox risk signals: ${b.risks.map((r) => `${r.type}/${r.severity}`).join(", ")})`);
     }
   }
   return lines.join("\n");
