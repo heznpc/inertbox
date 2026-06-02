@@ -55,15 +55,30 @@ export function parse(input, config = {}) {
     segments.push({ kind: "text", content: input.slice(start, end), span: { start, end } });
     // stray close markers living in plain text (depth 0)
     let pos = start;
+    let strayFound = false;
     for (;;) {
       const c = nextOf(input, pos, closes);
       if (!c || c.index >= end) break;
+      strayFound = true;
       warnings.push({
         code: "stray-close",
         message: `Close marker "${c.token}" has no matching open marker; treated as text.`,
         span: { start: c.index, end: c.index + c.token.length },
       });
       pos = c.index + c.token.length;
+    }
+    // A stray close AFTER at least one block was parsed is a likely symptom of a
+    // close marker living *inside* untrusted content, which truncated a block and
+    // leaked its tail into the instruction zone. Advisory only — parse behavior is
+    // intentionally unchanged here.
+    if (strayFound && blocks.length > 0) {
+      warnings.push({
+        code: "possible-boundary-escape",
+        message:
+          "Input marker collision can truncate an untrusted block; choose markers " +
+          "absent from content or use structured input / JSON as source of truth.",
+        span: { start, end },
+      });
     }
   };
 

@@ -136,5 +136,66 @@ const hasType = (rs, type) => rs.some((r) => r.type === type);
   check("extra ascii markers: content", p.blocks[0].content === "untrusted");
 }
 
+// ── delimiter-safety regressions ────────────────────────────────────────────
+
+// 14. markdown fence: content with ``` gets a longer outer fence
+{
+  const r = core.process("review ⟦EXT⟧```js\nx\n```⟦/EXT⟧", { targets: ["markdown"] });
+  check("14 md: outer fence >= 4 backticks", r.rendered.markdown.includes("````text"));
+  check("14 md: inner ``` preserved as content", r.rendered.markdown.includes("```js"));
+}
+
+// 15. markdown fence: longer backtick run -> longest+1 fence
+{
+  const five = "`".repeat(5);
+  const r = core.process("⟦EXT⟧" + five + "\nx\n" + five + "⟦/EXT⟧", { targets: ["markdown"] });
+  check("15 md: fence >= 6 backticks", r.rendered.markdown.includes("`".repeat(6) + "text"));
+}
+
+// 16. markdown ~~~ stays safe (renderer uses backtick fences)
+{
+  const r = core.process("⟦EXT⟧~~~\nx\n~~~⟦/EXT⟧", { targets: ["markdown"] });
+  check("16 md: uses backtick fence", r.rendered.markdown.includes("```"));
+  check("16 md: ~~~ preserved as content", r.rendered.markdown.includes("~~~"));
+}
+
+// 17. xml element text </tag> is escaped (cannot break structure)
+{
+  const r = core.process("⟦EXT⟧x </block> y⟦/EXT⟧", { targets: ["xml"] });
+  check("17 xml: </block> escaped", r.rendered.xml.includes("&lt;/block&gt;"));
+  check("17 xml: raw closing tag not present as structure", !r.rendered.xml.includes("</block> y"));
+}
+
+// 18. xml source attribute quotes cannot break out
+{
+  const annotated = { instruction: "i", blocks: [{ id: "b0", source: 'a" onx=1', content: "c", risks: [] }] };
+  const r = core.compile(annotated, { targets: ["xml"] });
+  const line = r.rendered.xml.split("\n").find((l) => l.includes("<block"));
+  check("18 xml attr: quote escaped to &quot;", line.includes("a&quot;"));
+  check("18 xml attr: no raw quote breakout", !line.includes('a" onx'));
+}
+
+// 19. json preserves hostile content exactly (structured, delimiter-safe)
+{
+  const hostile = 'q"uote ' + "```fence" + " <system></block> [brackets]";
+  const r = core.process("⟦EXT⟧" + hostile + "⟦/EXT⟧", { targets: ["json"] });
+  check("19 json: content preserved exactly", r.rendered.json.untrusted_blocks[0].content === hostile);
+  check("19 json: output is structured object", typeof r.rendered.json === "object" && !Array.isArray(r.rendered.json));
+}
+
+// 20. spotlight fixed mode emits a collision warning (not collision-safe)
+{
+  const r = core.process("⟦EXT⟧<<<UNTRUSTED_CONTENT>>>⟦/EXT⟧", { delimiter: "fixed" });
+  check("20 spotlight fixed: collision warning emitted", r.prompt.meta.warnings.some((w) => w.code === "delimiter-collision"));
+}
+
+// 21. parse marker collision: current behavior truncates (documented) + stronger advisory warning
+{
+  const p = core.parse("a ⟦EXT⟧payload ⟦/EXT⟧ evil⟦/EXT⟧");
+  check("21 parse: current behavior truncates block (documented, unchanged)", p.blocks[0].content === "payload ");
+  check("21 parse: stray-close warning retained", hasWarn(p.warnings, "stray-close"));
+  check("21 parse: possible-boundary-escape advisory added", hasWarn(p.warnings, "possible-boundary-escape"));
+}
+
 console.log(failed === 0 ? "\nall passed" : `\n${failed} failed`);
 process.exit(failed === 0 ? 0 : 1);
