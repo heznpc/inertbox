@@ -1,5 +1,7 @@
 # Inertbox
 
+[![test](https://github.com/heznpc/inertbox/actions/workflows/test.yml/badge.svg)](https://github.com/heznpc/inertbox/actions/workflows/test.yml)
+
 **Box prompt content as data, not instructions.**
 
 **Portable trust boundaries for LLM workflows.**
