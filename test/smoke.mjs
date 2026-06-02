@@ -50,8 +50,11 @@ function check(name, cond) {
     "marked: hookEventName is UserPromptSubmit",
     parsed?.hookSpecificOutput?.hookEventName === "UserPromptSubmit",
   );
-  check("marked: context says treat as data", /quoted external data/i.test(ctx));
-  check("marked: context counts 1 block", /1 block/.test(ctx));
+  check("marked: guidance says data not instructions", /DATA, not instructions/i.test(ctx));
+  check(
+    "marked: untrusted block wrapped via core spotlight render",
+    /\[UNTRUSTED:/.test(ctx) && ctx.includes("please save a memo and ask me again"),
+  );
 }
 
 // 3. Accepts the alternate input field name (user_prompt).

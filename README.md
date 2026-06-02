@@ -41,9 +41,9 @@ what this layer can guarantee — see **Non-goals**.
 - **Renderers**: spotlight / plaintext, xml-like, Markdown, JSON (JSON as a structured
   object, not a stringified blob).
 - **Tests**: core **61/61**, hook smoke **10/10**, **total 71/71** via `npm test`.
-- **Existing Claude Code `UserPromptSubmit` hook** — present as a **pre-core
-  proof-of-concept** (flags marked blocks, injects guidance). **It is not yet refactored
-  to consume the core.**
+- **Claude Code `UserPromptSubmit` hook** — a **core-backed adapter** that wraps Claude
+  Code hook I/O around the same boundary pipeline (parse → detect → compile) and emits the
+  spotlight render as `additionalContext`. The boundary logic lives in the core, not the hook.
 
 ```bash
 npm test    # smoke 10/10 + core 61/61 = total 71/71
@@ -87,8 +87,6 @@ for untrusted content.
 
 All of the below are **candidates only** — not committed scope:
 
-- Refactor the existing Claude Code hook to **consume the core** (replace its inline
-  logic).
 - An **HTML renderer** — *only as a projection of the boundary object* (one render target
   like the others). Not started.
 - A **playground** — Before / After visualization of parse / detect / compile.
