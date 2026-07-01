@@ -3,7 +3,7 @@
 All notable changes to Inertbox are documented here. This project is in early
 public alpha.
 
-## 0.1.0-alpha.0 — Unreleased
+## 0.1.0-alpha.0 — 2026-07-02
 
 Initial public alpha.
 

@@ -6,7 +6,8 @@
 
 > It makes the boundary legible and portable. It does not make it obeyed.
 
-**Status:** public alpha (`v0.1.0-alpha`) — not yet published to npm; run from source.
+**Status:** public alpha — published to npm as
+[`inertbox`](https://www.npmjs.com/package/inertbox) (`0.1.0-alpha.0`).
 
 When you paste external content into a coding agent — a log, an issue body, a
 spec, another model's output — instruction-shaped text inside it ("ignore
@@ -22,14 +23,19 @@ pbpaste | inertbox wrap - | pbcopy    # wrap whatever you were about to paste (m
 
 ## Quick start
 
-Not yet on npm — run from source:
+```bash
+npx inertbox wrap notes.md                # wrap a file
+pbpaste | npx inertbox wrap - | pbcopy    # wrap the clipboard (macOS)
+npx inertbox wrap notes.md > wrapped.md
+npx inertbox check wrapped.md             # exit 0 = verified
+```
+
+Or from source:
 
 ```bash
 git clone https://github.com/heznpc/inertbox
 cd inertbox
 node bin/inertbox.mjs wrap README.md | head -12
-printf 'external text\n' | node bin/inertbox.mjs wrap - > wrapped.md
-node bin/inertbox.mjs check wrapped.md    # exit 0 = verified
 npm test                                   # 121 checks
 ```
 
@@ -154,8 +160,6 @@ text still reaches the model alongside it.
 
 ## Planned
 
-- npm publish of `inertbox` (name unclaimed as of 2026-07-02).
-
 Candidates only — not committed scope: a playground (before/after
 visualization), React components for displaying boundary objects, an HTML
 renderer strictly as another projection of the boundary object.
@@ -204,7 +208,7 @@ This project is **not**:
 
 - No external persons, accounts, emails, tokens, or API keys.
 - No user / usage / star metrics.
-- Planned package name `inertbox`; GitHub repository `heznpc/inertbox`.
+- Published as the `inertbox` npm package; GitHub repository `heznpc/inertbox`.
 
 ## License
 
