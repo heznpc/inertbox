@@ -1,23 +1,24 @@
 {
   "name": "inertbox",
   "version": "0.1.0-alpha.0",
-  "description": "Box prompt content as data, not instructions — portable trust boundaries for LLM workflows.",
+  "description": "Wrap external text before you paste it into a coding agent — box it as data, not instructions.",
   "type": "module",
   "exports": {
     ".": "./core/index.mjs"
   },
   "main": "./core/index.mjs",
   "bin": {
-    "inertbox-hook": "./hooks/inertbox.mjs"
+    "inertbox": "./bin/inertbox.mjs"
   },
   "scripts": {
-    "test": "npm run test:smoke && npm run test:core",
+    "test": "npm run test:smoke && npm run test:core && npm run test:wrap",
     "test:smoke": "node test/smoke.mjs",
-    "test:core": "node test/core.test.mjs"
+    "test:core": "node test/core.test.mjs",
+    "test:wrap": "node test/wrap.test.mjs"
   },
   "files": [
     "core/",
-    "hooks/",
+    "bin/",
     "README.md",
     "LICENSE",
     "CHANGELOG.md"

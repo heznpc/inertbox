@@ -25,7 +25,7 @@
 /** @typedef {{ instruction:string, blocks:AnnotatedBlock[], warnings?:Warning[] }} AnnotatedPrompt */
 
 /** @typedef {'spotlight'|'xml'|'markdown'|'json'} RenderTarget */
-/** @typedef {{ targets?:RenderTarget[], delimiter?:'random'|'fixed', includeRisks?:boolean, guidanceLocale?:'en'|'ko' }} CompileConfig */
+/** @typedef {{ targets?:RenderTarget[], delimiter?:'derived'|'fixed', includeRisks?:boolean, guidanceLocale?:'en'|'ko' }} CompileConfig */
 /** @typedef {{ guidance:string, instruction:string, untrusted_blocks:Array<{id:string,source:string|null,content:string,risks:RiskSpan[]}>, note:string }} JsonRender */
 /** @typedef {{ spotlight?:string, xml?:string, markdown?:string, json?:JsonRender }} RenderedFormats */
 /** @typedef {{ instruction:string, blocks:AnnotatedBlock[], meta:{ hasRisks:boolean, blockCount:number, warnings:Warning[], delimiter:MarkerPair } }} CompiledPrompt */

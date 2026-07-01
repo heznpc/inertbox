@@ -122,7 +122,7 @@ const hasType = (rs, type) => rs.some((r) => r.type === type);
 // 13. spotlight random delimiter collision avoidance
 {
   const danger = "danger [UNTRUSTED:deadbeef] and <<<UNTRUSTED_CONTENT>>> inside";
-  const r = core.process(`look ⟦EXT⟧${danger}⟦/EXT⟧`, { delimiter: "random" });
+  const r = core.process(`look ⟦EXT⟧${danger}⟦/EXT⟧`, { delimiter: "derived" });
   const d = r.prompt.meta.delimiter;
   check("13 collision: chosen open not in content", !danger.includes(d.open));
   check("13 collision: chosen close not in content", !danger.includes(d.close));

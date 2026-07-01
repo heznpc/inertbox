@@ -7,7 +7,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/inertbox.mjs",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/examples/claude-code-hook/inertbox.mjs",
             "timeout": 5
           }
         ]

@@ -8,7 +8,7 @@ import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
 const here = dirname(fileURLToPath(import.meta.url));
-const HOOK = join(here, "..", "hooks", "inertbox.mjs");
+const HOOK = join(here, "..", "examples", "claude-code-hook", "inertbox.mjs");
 
 function run(inputObj) {
   const res = spawnSync("node", [HOOK], {
