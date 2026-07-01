@@ -67,7 +67,8 @@ function attrEscape(s) {
     .replace(/'/g, "&#39;");
 }
 
-function fenceFor(content) {
+/** Backtick fence guaranteed longer than any run inside the content (min 3). */
+export function fenceFor(content) {
   const runs = content.match(/`+/g) || [];
   const longest = runs.reduce((m, r) => Math.max(m, r.length), 0);
   return "`".repeat(Math.max(3, longest + 1));
@@ -132,7 +133,7 @@ function renderJson(annotated, guidance) {
  */
 export function compile(annotated, config = {}) {
   const targets = config.targets ?? ["spotlight"];
-  const mode = config.delimiter ?? "random";
+  const mode = config.delimiter ?? "derived";
   const guidance = GUIDANCE[config.guidanceLocale ?? "en"] ?? GUIDANCE.en;
   const includeRisks = config.includeRisks ?? false;
 

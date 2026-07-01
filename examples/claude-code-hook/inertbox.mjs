@@ -7,7 +7,7 @@
 // prompt-injection prevention — the core render is delimiting-mode spotlighting
 // (probabilistic, baseline hygiene).
 
-import { process as buildBoundary, DEFAULT_MARKERS } from "../core/index.mjs";
+import { process as buildBoundary, DEFAULT_MARKERS } from "../../core/index.mjs";
 
 let raw = "";
 process.stdin.setEncoding("utf8");
