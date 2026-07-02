@@ -137,6 +137,26 @@ The contract (what `check` anchors on — normative):
   stamped hash permanently unverifiable). Decode or base64 binary content
   first.
 
+## Source labels
+
+`source:` is a single-line **claimed** label (control characters are refused at
+wrap time; keep it ≤ 64 characters — consumers may truncate beyond that).
+Recommended labels, so that `from` stays legible when many emitters exist:
+
+| Label form | Assigned by | Example |
+|---|---|---|
+| `codex-reply`, `claude-reply` | a human wrapping another AI's reply from the clipboard (`iwx` / `iwc`) | `codex-reply` |
+| `zoint:<provider>:<run>` | a runtime that executed the provider session itself | `zoint:codex:1a2b3c4d` |
+| `ci:<system>:<job>` | a CI job wrapping vendored external docs | `ci:github:12345` |
+| `mcp:<server>:<tool>` | an agent/MCP tool wrapping fetched content | `mcp:websearch:fetch` |
+| file path | the default for `wrap <file>` | `notes.md` |
+| `-` | stdin / unknown | `-` |
+
+Namespaced labels (`zoint:`, `ci:`, `mcp:`) signal that the label was assigned
+**structurally** — the emitter itself produced or fetched the content. Bare
+labels signal that a human claimed it. Either way the label remains a claim:
+the format does not prove provenance.
+
 ## What `check` verifies — and when it is useful
 
 `check` is structure-first: it lints well-formedness (anchors paired, metadata
