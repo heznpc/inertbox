@@ -7,7 +7,7 @@
 // Exit codes: 0 = ok / verified, 1 = malformed or verification failure,
 //             2 = usage or input error.
 
-import { readFileSync } from "node:fs";
+import { readFileSync, readSync } from "node:fs";
 import { wrap, check, detect, FORMAT_VERSION } from "../core/index.mjs";
 
 function usage(code) {
@@ -38,10 +38,34 @@ function fail(msg, code) {
   process.exit(code);
 }
 
+function sleep(ms) {
+  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
+}
+
+function readStdin() {
+  const chunks = [];
+  const buf = Buffer.allocUnsafe(65536);
+  for (;;) {
+    let n;
+    try {
+      n = readSync(0, buf, 0, buf.length, null);
+    } catch (e) {
+      if (e.code === "EAGAIN") {
+        sleep(10);
+        continue;
+      }
+      throw e;
+    }
+    if (n === 0) break;
+    chunks.push(Buffer.from(buf.subarray(0, n)));
+  }
+  return Buffer.concat(chunks);
+}
+
 function readInput(fileArg) {
   if (fileArg === undefined || fileArg === "-") {
     if (process.stdin.isTTY) fail("no input file and stdin is a terminal (see: inertbox --help)", 2);
-    return { buf: readFileSync(0), defaultSource: "-" };
+    return { buf: readStdin(), defaultSource: "-" };
   }
   try {
     return { buf: readFileSync(fileArg), defaultSource: fileArg };

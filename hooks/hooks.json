@@ -1,0 +1,17 @@
+{
+  "description": "inertbox — check INERTBOX wrapped pasted text and add source-aware context",
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/check-on-paste.mjs",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}

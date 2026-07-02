@@ -3,6 +3,30 @@
 All notable changes to Inertbox are documented here. This project is in early
 public alpha.
 
+## 0.2.0-alpha.0 — 2026-07-02
+
+### Added
+- Sender-side trailing guidance line after the INERTBOX end anchor. The v1
+  wrapper body and hash domain are unchanged; `check` continues to tolerate v1
+  documents without the trailing line.
+- First-class Claude Code `UserPromptSubmit` check-on-paste hook at
+  `hooks/check-on-paste.mjs`, with `hooks/hooks.json` wiring and
+  `.claude-plugin/plugin.json` manifest packaging.
+- Hook smoke coverage for no-wrapper, intact wrapper, tampered wrapper,
+  overlong hostile source labels, and malformed hook stdin.
+- README Cross-AI paste helpers (`iwx`, `iwc`, `iw`) with exact-version npm
+  fallback, failure-safe clipboard writes, and final-newline restoration.
+
+### Changed
+- README now documents the first-class hook honestly: it adds context only, does
+  not replace the prompt, and does not prevent injection or prove provenance.
+- Example Claude Code marker hook docs now point INERTBOX wrapped-document users
+  to the first-class hook.
+
+### Fixed
+- CLI stdin reads now retry transient `EAGAIN` results so shell pipelines such
+  as `wrap - | check -` remain stable on nonblocking stdin fds.
+
 ## 0.1.0-alpha.0 — 2026-07-02
 
 Initial public alpha.
