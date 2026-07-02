@@ -16,6 +16,9 @@ public alpha.
   overlong hostile source labels, and malformed hook stdin.
 - README Cross-AI paste helpers (`iwx`, `iwc`, `iw`) with exact-version npm
   fallback, failure-safe clipboard writes, and final-newline restoration.
+- Source label convention: namespaced structural labels (`zoint:`, `ci:`,
+  `mcp:`) vs bare human-claimed labels; ≤ 64 characters; still a claim, never
+  proof of provenance.
 
 ### Changed
 - README now documents the first-class hook honestly: it adds context only, does
