@@ -1,6 +1,6 @@
 {
   "name": "inertbox",
-  "version": "0.1.0-alpha.0",
+  "version": "0.2.0-alpha.0",
   "description": "Wrap external text before you paste it into a coding agent — box it as data, not instructions.",
   "type": "module",
   "exports": {
@@ -19,6 +19,8 @@
   "files": [
     "core/",
     "bin/",
+    "hooks/",
+    ".claude-plugin/",
     "README.md",
     "LICENSE",
     "CHANGELOG.md"

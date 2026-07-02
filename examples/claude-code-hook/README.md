@@ -3,6 +3,9 @@
 A core-backed adapter kept as an **example** (it is not part of the npm package
 and not the primary surface — that is the `inertbox` CLI).
 
+For INERTBOX wrapped documents, prefer the first-class check-on-paste hook in
+[`../../hooks/`](../../hooks/).
+
 What it does: on a prompt containing a `⟦EXT⟧ … ⟦/EXT⟧` marked block, it emits
 the core spotlight render as `hookSpecificOutput.additionalContext`; on an
 unmarked prompt it is a silent no-op.
