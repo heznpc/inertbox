@@ -8,6 +8,9 @@
 
 **Status:** public alpha — published to npm as
 [`inertbox`](https://www.npmjs.com/package/inertbox) (`0.1.0-alpha.0`).
+This is an agent-workflow boundary **experiment**, not a proven utility:
+whether it earns habitual use over a shell alias or a prompt template is
+deliberately still an open question.
 
 When you paste external content into a coding agent — a log, an issue body, a
 spec, another model's output — instruction-shaped text inside it ("ignore
