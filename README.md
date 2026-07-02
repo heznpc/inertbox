@@ -38,7 +38,7 @@ Or from source:
 git clone https://github.com/heznpc/inertbox
 cd inertbox
 node bin/inertbox.mjs wrap README.md | head -12
-npm test                                   # 149 checks
+npm test                                   # 160 checks
 ```
 
 ## Cross-AI paste
@@ -250,7 +250,7 @@ INERTBOX wrapped documents.
   `.claude-plugin/plugin.json` and `hooks/hooks.json`.
 - Surface-agnostic boundary-object core: `parse` / `detect` / `compile` /
   `process`, four render targets, delimiter-safety machinery.
-- Tests: hook smoke **29**, core **61**, wrap/CLI **59** — **149 total** via
+- Tests: hook smoke **38**, core **61**, wrap/CLI **61** — **160 total** via
   `npm test`. The wrap suite encodes the empirically confirmed format traps
   (trailing-newline canonicalization, nested wraps, metadata-lookalike content,
   EOL conversion, source header injection, invalid UTF-8) as regressions.

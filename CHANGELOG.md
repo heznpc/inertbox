@@ -5,6 +5,26 @@ public alpha.
 
 ## 0.2.0-alpha.0 — 2026-07-02
 
+### Fixed (post-review, pre-publish)
+- Large `wrap` output no longer truncates in a pipe: the CLI let the event loop
+  drain stdout instead of calling `process.exit(0)` immediately after the write,
+  which raced the async flush and truncated output over ~64 KB (e.g. a big
+  `pbpaste | inertbox wrap - | pbcopy`).
+- Shared, hardened stdin reader (`lib/read-stdin.mjs`) used by both the CLI and
+  the hook: retries `EINTR`, bounds `EAGAIN` retries with an idle timeout (no
+  more unbounded hang), guards `SharedArrayBuffer` absence, and maps read errors
+  to the documented exit-2 contract. `wrap -`/`check -` also survive a
+  downstream that closes early (`EPIPE`).
+- Hook hardening: loads the core via a dynamic import inside the try/catch so a
+  broken install fails open instead of stopping the turn; caps the echoed
+  `source`/error strings by Unicode code point (never splits a surrogate pair);
+  only fires on a real begin-anchor at line start (no false note when a prompt
+  merely mentions the marker); and caps the number of detailed wrappers so an
+  adversarial many-anchor paste cannot amplify the injected context.
+- Test coverage for all of the above (large-pipe round-trip, emoji source,
+  mixed verified/tampered wrappers, inline-mention gate, anchor-amplification
+  cap) plus `try/finally` cleanup of the CLI test's temp dir. Total 160 checks.
+
 ### Added
 - Sender-side trailing guidance line after the INERTBOX end anchor. The v1
   wrapper body and hash domain are unchanged; `check` continues to tolerate v1

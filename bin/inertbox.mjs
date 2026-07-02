@@ -7,8 +7,9 @@
 // Exit codes: 0 = ok / verified, 1 = malformed or verification failure,
 //             2 = usage or input error.
 
-import { readFileSync, readSync } from "node:fs";
+import { readFileSync } from "node:fs";
 import { wrap, check, detect, FORMAT_VERSION } from "../core/index.mjs";
+import { readStdin } from "../lib/read-stdin.mjs";
 
 function usage(code) {
   const out = code === 0 ? process.stdout : process.stderr;
@@ -38,34 +39,21 @@ function fail(msg, code) {
   process.exit(code);
 }
 
-function sleep(ms) {
-  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
-}
-
-function readStdin() {
-  const chunks = [];
-  const buf = Buffer.allocUnsafe(65536);
-  for (;;) {
-    let n;
-    try {
-      n = readSync(0, buf, 0, buf.length, null);
-    } catch (e) {
-      if (e.code === "EAGAIN") {
-        sleep(10);
-        continue;
-      }
-      throw e;
-    }
-    if (n === 0) break;
-    chunks.push(Buffer.from(buf.subarray(0, n)));
-  }
-  return Buffer.concat(chunks);
-}
+// A downstream reader that closes early (e.g. `wrap - | head`) makes stdout emit
+// EPIPE; swallow it instead of crashing with an uncaught error.
+process.stdout.on("error", (e) => {
+  if (e && e.code === "EPIPE") process.exit(0);
+  throw e;
+});
 
 function readInput(fileArg) {
   if (fileArg === undefined || fileArg === "-") {
     if (process.stdin.isTTY) fail("no input file and stdin is a terminal (see: inertbox --help)", 2);
-    return { buf: readStdin(), defaultSource: "-" };
+    try {
+      return { buf: readStdin(), defaultSource: "-" };
+    } catch (e) {
+      fail(`cannot read stdin: ${e.code ?? e.message}`, 2);
+    }
   }
   try {
     return { buf: readFileSync(fileArg), defaultSource: fileArg };
@@ -117,8 +105,11 @@ if (cmd === "wrap") {
       process.stderr.write(`  - ${r.ruleId} (${r.type}/${r.severity}): ${JSON.stringify(r.snippet)}\n`);
     }
   }
+  // Do NOT process.exit() here: for output larger than the OS pipe buffer
+  // (~64 KB) an immediate exit races the async drain and truncates the document
+  // mid-stream. Setting exitCode and returning lets Node flush stdout, then exit 0.
+  process.exitCode = 0;
   process.stdout.write(result.doc);
-  process.exit(0);
 } else if (cmd === "check") {
   if (flags.scan || flags.timestamp || flags.source !== undefined) {
     fail("check takes no flags", 2);
@@ -135,7 +126,7 @@ if (cmd === "wrap") {
     }
     for (const warn of w.warnings) process.stderr.write(`       warning: ${warn}\n`);
   }
-  process.exit(result.ok ? 0 : 1);
+  process.exitCode = result.ok ? 0 : 1;
 } else {
   fail(`unknown command ${JSON.stringify(cmd)} (expected "wrap" or "check")`, 2);
 }
