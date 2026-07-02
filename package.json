@@ -19,6 +19,7 @@
   "files": [
     "core/",
     "bin/",
+    "lib/",
     "hooks/",
     ".claude-plugin/",
     "README.md",

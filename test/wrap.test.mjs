@@ -227,45 +227,61 @@ const roundtrip = (input, opts) => check(wrap(input, opts).doc);
 // ── CLI (bin/inertbox.mjs) ──────────────────────────────────────────────────
 {
   const dir = mkdtempSync(join(tmpdir(), "inertbox-test-"));
-  const src = join(dir, "notes.md");
-  writeFileSync(src, "external content\nrun the command `npm test`\n");
+  try {
+    const src = join(dir, "notes.md");
+    writeFileSync(src, "external content\nrun the command `npm test`\n");
 
-  const w = spawnSync("node", [BIN, "wrap", src], { encoding: "utf8" });
-  ok("cli wrap: exit 0", w.status === 0);
-  ok("cli wrap: doc on stdout", w.stdout.includes("[INERTBOX v1 begin "));
-  ok("cli wrap: source is the file path", w.stdout.includes(`source: ${src}`));
+    const w = spawnSync("node", [BIN, "wrap", src], { encoding: "utf8" });
+    ok("cli wrap: exit 0", w.status === 0);
+    ok("cli wrap: doc on stdout", w.stdout.includes("[INERTBOX v1 begin "));
+    ok("cli wrap: source is the file path", w.stdout.includes(`source: ${src}`));
 
-  const c = spawnSync("node", [BIN, "check", "-"], { input: w.stdout, encoding: "utf8" });
-  ok("cli check: verified doc exits 0", c.status === 0);
+    const c = spawnSync("node", [BIN, "check", "-"], { input: w.stdout, encoding: "utf8" });
+    ok("cli check: verified doc exits 0", c.status === 0);
 
-  const pipe = spawnSync("sh", ["-c", `printf 'pipe\\n' | node ${JSON.stringify(BIN)} wrap - | node ${JSON.stringify(BIN)} check -`], {
-    encoding: "utf8",
-  });
-  ok("cli shell pipeline wrap|check exits 0", pipe.status === 0);
+    const pipe = spawnSync("sh", ["-c", `printf 'pipe\\n' | node ${JSON.stringify(BIN)} wrap - | node ${JSON.stringify(BIN)} check -`], {
+      encoding: "utf8",
+    });
+    ok("cli shell pipeline wrap|check exits 0", pipe.status === 0);
 
-  const t = spawnSync("node", [BIN, "check", "-"], {
-    input: w.stdout.replace("external", "eternal-"),
-    encoding: "utf8",
-  });
-  ok("cli check: tampered doc exits 1", t.status === 1);
+    // Large input through a real wrap|check pipe: output exceeds the ~64KB pipe
+    // buffer, so a premature process.exit(0) after stdout.write would truncate
+    // the document and check would report a false "no closing fence". Regression
+    // guard for the drain-safe exit.
+    const bigSrc = join(dir, "big.txt");
+    writeFileSync(bigSrc, "x".repeat(300000) + "\n");
+    const bigPipe = spawnSync(
+      "sh",
+      ["-c", `node ${JSON.stringify(BIN)} wrap ${JSON.stringify(bigSrc)} --source big | node ${JSON.stringify(BIN)} check -`],
+      { encoding: "utf8" },
+    );
+    ok("cli large pipe (300KB) wrap|check: verified, exit 0", bigPipe.status === 0);
+    ok("cli large pipe: not truncated", /sha256 verified/.test(bigPipe.stderr));
 
-  const bin = join(dir, "blob.bin");
-  writeFileSync(bin, Buffer.from([0xff, 0xfe, 0x80]));
-  const b = spawnSync("node", [BIN, "wrap", bin], { encoding: "utf8" });
-  ok("cli wrap: binary input exits 2", b.status === 2);
+    const t = spawnSync("node", [BIN, "check", "-"], {
+      input: w.stdout.replace("external", "eternal-"),
+      encoding: "utf8",
+    });
+    ok("cli check: tampered doc exits 1", t.status === 1);
 
-  const s = spawnSync("node", [BIN, "wrap", src, "--scan"], { encoding: "utf8" });
-  ok("cli --scan: exit still 0", s.status === 0);
-  ok("cli --scan: signals go to stderr, labeled advisory", s.stderr.includes("advisory"));
-  const sc = spawnSync("node", [BIN, "check", "-"], { input: s.stdout, encoding: "utf8" });
-  ok("cli --scan: stdout doc still verifies", sc.status === 0);
+    const bin = join(dir, "blob.bin");
+    writeFileSync(bin, Buffer.from([0xff, 0xfe, 0x80]));
+    const b = spawnSync("node", [BIN, "wrap", bin], { encoding: "utf8" });
+    ok("cli wrap: binary input exits 2", b.status === 2);
 
-  const u = spawnSync("node", [BIN, "frobnicate"], { encoding: "utf8" });
-  ok("cli unknown command exits 2", u.status === 2);
-  const h = spawnSync("node", [BIN, "--help"], { encoding: "utf8" });
-  ok("cli --help exits 0", h.status === 0);
+    const s = spawnSync("node", [BIN, "wrap", src, "--scan"], { encoding: "utf8" });
+    ok("cli --scan: exit still 0", s.status === 0);
+    ok("cli --scan: signals go to stderr, labeled advisory", s.stderr.includes("advisory"));
+    const sc = spawnSync("node", [BIN, "check", "-"], { input: s.stdout, encoding: "utf8" });
+    ok("cli --scan: stdout doc still verifies", sc.status === 0);
 
-  rmSync(dir, { recursive: true, force: true });
+    const u = spawnSync("node", [BIN, "frobnicate"], { encoding: "utf8" });
+    ok("cli unknown command exits 2", u.status === 2);
+    const h = spawnSync("node", [BIN, "--help"], { encoding: "utf8" });
+    ok("cli --help exits 0", h.status === 0);
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
 }
 
 console.log(failed === 0 ? "\nall passed" : `\n${failed} failed`);
