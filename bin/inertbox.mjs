@@ -39,6 +39,17 @@ function fail(msg, code) {
   process.exit(code);
 }
 
+const TERMINAL_CONTROL_RE = /[\u0000-\u001f\u007f-\u009f]/gu;
+
+function terminalSafe(value) {
+  return String(value).replace(TERMINAL_CONTROL_RE, (ch) => {
+    if (ch === "\n") return "\\n";
+    if (ch === "\r") return "\\r";
+    if (ch === "\t") return "\\t";
+    return `\\u${ch.codePointAt(0).toString(16).padStart(4, "0")}`;
+  });
+}
+
 // A downstream reader that closes early (e.g. `wrap - | head`) makes stdout emit
 // EPIPE; swallow it instead of crashing with an uncaught error.
 process.stdout.on("error", (e) => {
@@ -116,15 +127,15 @@ if (cmd === "wrap") {
   }
   const { buf } = readInput(positional[0]);
   const result = check(buf);
-  for (const e of result.errors) process.stderr.write(`inertbox: ${e}\n`);
+  for (const e of result.errors) process.stderr.write(`inertbox: ${terminalSafe(e)}\n`);
   for (const w of result.wrappers) {
-    const label = w.source ?? "(unknown source)";
+    const label = terminalSafe(w.source ?? "(unknown source)");
     if (w.verified) {
       process.stderr.write(`ok   - ${label} (${w.bytes} bytes, sha256 verified)\n`);
     } else {
-      process.stderr.write(`FAIL - ${label}: ${w.errors.join("; ")}\n`);
+      process.stderr.write(`FAIL - ${label}: ${w.errors.map(terminalSafe).join("; ")}\n`);
     }
-    for (const warn of w.warnings) process.stderr.write(`       warning: ${warn}\n`);
+    for (const warn of w.warnings) process.stderr.write(`       warning: ${terminalSafe(warn)}\n`);
   }
   process.exitCode = result.ok ? 0 : 1;
 } else {
