@@ -239,6 +239,15 @@ const roundtrip = (input, opts) => check(wrap(input, opts).doc);
     const c = spawnSync("node", [BIN, "check", "-"], { input: w.stdout, encoding: "utf8" });
     ok("cli check: verified doc exits 0", c.status === 0);
 
+    const terminalEscapeSource = w.stdout.replace(/^source: .*$/m, "source: evil\u001b[31mred");
+    const escaped = spawnSync("node", [BIN, "check", "-"], { input: terminalEscapeSource, encoding: "utf8" });
+    ok(
+      "cli check: source control bytes are escaped on stderr",
+      escaped.status === 0 &&
+        !escaped.stderr.includes("\u001b") &&
+        escaped.stderr.includes("evil\\u001b[31mred"),
+    );
+
     const pipe = spawnSync("sh", ["-c", `printf 'pipe\\n' | node ${JSON.stringify(BIN)} wrap - | node ${JSON.stringify(BIN)} check -`], {
       encoding: "utf8",
     });
